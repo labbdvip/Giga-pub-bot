@@ -1,219 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Earns</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<meta charset="UTF-8">
+<title>Earn App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <script src="https://alwingulla.com/88/pfe/current/tag.min.js?z=10477032"></script>
+<style>
+body{
+  margin:0;
+  font-family:sans-serif;
+  background:#eef7f1;
+}
+header{
+  padding:16px;
+  font-size:22px;
+  font-weight:bold;
+}
+.card{
+  background:#fff;
+  margin:16px;
+  padding:20px;
+  border-radius:20px;
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:30px;
+  background:#2f7d57;
+  color:#fff;
+  font-size:16px;
+  margin-top:10px;
+}
+nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#fff;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+  box-shadow:0 -4px 12px rgba(0,0,0,.1)
+}
+nav div{
+  text-align:center;
+  font-size:12px;
+}
+section{display:none}
+section.active{display:block}
+</style>
 
-    <style>
-        .active-tab { color: #10b981 !important; } /* Green theme from screenshot */
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .bottom-nav { border-top-left-radius: 25px; border-top-right-radius: 25px; }
-        .card-custom { background: #f9fdfc; border: 1px solid #eef6f5; }
-    </style>
 </head>
-<body class="bg-[#f0f7f6] text-gray-800 pb-24">
+<body>
 
-    <div class="bg-white p-4 flex justify-between items-center shadow-sm">
-        <i class="fa-solid fa-xmark text-xl"></i>
-        <h2 class="text-lg font-bold">Super Earns</h2>
-        <i class="fa-solid fa-ellipsis-vertical text-xl"></i>
-    </div>
+<header>Earn App</header>
 
-    <div class="p-4 flex items-center gap-3 bg-white mb-2">
-        <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xl">RB</div>
-        <div>
-            <h3 id="topUserName" class="font-bold text-gray-700">RRR DEVELOPER BD</h3>
-            <p id="topBalance" class="text-green-600 font-bold text-sm">BDT 0.10</p>
-        </div>
-    </div>
+<!-- DASHBOARD -->
+<section id="dashboard" class="active">
 
-    <div id="home" class="tab-content active p-4 space-y-4">
-        <div class="bg-white p-6 rounded-3xl shadow-sm text-center">
-            <h2 class="text-xl font-bold">Welcome, <span class="userNameText">User</span>!</h2>
-            <p class="text-sm text-gray-400 mt-2">A new day brings new opportunities to grow your earnings.</p>
-            <button onclick="showTab('earn')" class="mt-4 bg-[#34785c] text-white px-6 py-2 rounded-full font-bold flex items-center gap-2 mx-auto">
-                <i class="fa-solid fa-tree"></i> Start Growing
-            </button>
-        </div>
+  <div class="card">
+    <h3>Balance</h3>
+    <h1 id="balance">0.00</h1>
+  </div>
 
-        <div class="grid grid-cols-2 gap-4">
-            <div class="bg-white p-6 rounded-3xl text-center shadow-sm">
-                <i class="fa-solid fa-wallet text-2xl text-gray-400 mb-2"></i>
-                <p class="text-xs text-gray-400 uppercase">Total Earnings</p>
-                <h2 class="text-xl font-bold mt-1">BDT <span class="balanceText">0.00</span></h2>
-            </div>
-            <div class="bg-white p-6 rounded-3xl text-center shadow-sm">
-                <i class="fa-solid fa-eye text-2xl text-gray-400 mb-2"></i>
-                <p class="text-xs text-gray-400 uppercase">Ads Watched</p>
-                <h2 id="adsWatched" class="text-xl font-bold mt-1">0</h2>
-            </div>
-        </div>
-    </div>
+  <div class="card">
+    <h3>Telegram Tasks</h3>
+    <div id="tgTasks">Loading...</div>
+  </div>
 
-    <div id="earn" class="tab-content p-4 space-y-4">
-        <h2 class="text-2xl font-bold">Earning Field</h2>
-        <div class="bg-white p-8 rounded-3xl shadow-sm text-center">
-            <h2 class="text-xl font-bold">Ad Tasks</h2>
-            <p class="text-sm text-gray-400 mt-1">Watch ads to cultivate your earnings.</p>
-            
-            <div class="flex justify-around my-6 text-gray-400 text-sm">
-                <div>Completed: <span id="compCount" class="text-gray-800 font-bold">0</span></div>
-                <div>Remaining: <span class="text-gray-800 font-bold">1999</span></div>
-            </div>
+</section>
 
-            <button onclick="watchAd()" class="w-full bg-[#34785c] text-white p-4 rounded-full font-bold flex items-center justify-center gap-2">
-                <i class="fa-solid fa-circle-play"></i> Watch Ad
-            </button>
-        </div>
+<!-- ADS -->
+<section id="ads">
+  <div class="card">
+    <h3>Watch Ads</h3>
+    <button onclick="watchAd()">Watch Ad</button>
+  </div>
+</section>
 
-        <div class="bg-white p-8 rounded-3xl shadow-sm text-center">
-            <h2 class="text-xl font-bold">Bonus Tasks</h2>
-            <p class="text-sm text-gray-400 mt-4">No bonus tasks available.</p>
-        </div>
-    </div>
+<!-- WITHDRAW -->
+<section id="withdraw">
+  <div class="card">
+    <h3>Withdraw</h3>
+    <p>Coming soon</p>
+  </div>
+</section>
 
-    <div id="withdraw" class="tab-content p-4 space-y-4">
-        <h2 class="text-2xl font-bold text-[#1a4d3a]">Harvest Your Earnings</h2>
-        <div class="bg-white p-6 rounded-3xl shadow-sm space-y-4">
-            <div class="text-center">
-                <p class="text-gray-400 text-sm">Available Balance</p>
-                <h2 class="text-2xl font-bold text-[#34785c]">BDT <span class="balanceText">0.00</span></h2>
-            </div>
-            
-            <div>
-                <label class="text-sm font-bold text-gray-600">Withdrawal Method</label>
-                <select id="wMethod" class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl mt-1 outline-none">
-                    <option value="">Select a method</option>
-                    <option value="Bikash">Bikash</option>
-                    <option value="Nagad">Nagad</option>
-                </select>
-            </div>
+<!-- PROFILE -->
+<section id="profile">
+  <div class="card">
+    <h3>Profile</h3>
+    <p>User Area</p>
+  </div>
+</section>
 
-            <div>
-                <label class="text-sm font-bold text-gray-600">Amount</label>
-                <input type="number" id="wAmount" placeholder="Enter amount" class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl mt-1 outline-none">
-            </div>
+<!-- BOTTOM NAV -->
+<nav>
+  <div onclick="showTab('dashboard')">🏠<br>Dashboard</div>
+  <div onclick="showTab('ads')">📺<br>Ads</div>
+  <div onclick="showTab('withdraw')">💸<br>Withdraw</div>
+  <div onclick="showTab('profile')">👤<br>Profile</div>
+</nav>
 
-            <button onclick="submitWithdraw()" class="w-full bg-[#34785c] text-white p-4 rounded-full font-bold flex items-center justify-center gap-2">
-                <i class="fa-solid fa-paper-plane"></i> Request Withdrawal
-            </button>
-        </div>
-    </div>
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getFirestore, doc, getDoc, getDocs,
+  updateDoc, increment, collection
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    <div id="profile" class="tab-content p-4 text-center">
-        <div class="bg-white p-10 rounded-[40px] shadow-sm mb-4">
-            <div class="w-24 h-24 bg-blue-500 rounded-full mx-auto flex items-center justify-center text-white text-4xl font-bold mb-4 shadow-lg">RB</div>
-            <h2 class="text-2xl font-bold text-gray-800 userNameText">User Name</h2>
-            <p class="text-gray-400 text-sm">@USER_ID_ADMIN</p>
-        </div>
-        
-        <div class="space-y-3">
-            <div class="bg-white p-4 rounded-2xl flex justify-between items-center px-6">
-                <span class="text-gray-500 font-bold"><i class="fa-solid fa-wallet mr-3"></i> Balance</span>
-                <span class="font-bold text-green-600">BDT <span class="balanceText">0.00</span></span>
-            </div>
-            <button onclick="auth.signOut()" class="w-full bg-red-50 text-red-500 p-4 rounded-2xl font-bold">Logout</button>
-        </div>
-    </div>
+/* 🔥 FIREBASE CONFIG */
+const firebaseConfig = {
+  apiKey: "AIzaSyCygxCD-LtbsfORwG4qnEE8Vy-v_0u1cG4",
+  authDomain: "new-bdf18.firebaseapp.com",
+  projectId: "new-bdf18"
+};
 
-    <div class="fixed bottom-24 right-6 w-14 h-14 bg-[#34785c] rounded-full flex items-center justify-center text-white text-2xl shadow-xl">
-        <i class="fa-solid fa-users"></i>
-    </div>
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-    <div class="fixed bottom-0 left-0 right-0 bg-white bottom-nav shadow-[0_-5px_15px_rgba(0,0,0,0.05)] flex justify-around p-4">
-        <button onclick="showTab('home')" class="nav-btn active-tab flex flex-col items-center gap-1">
-            <i class="fa-solid fa-house text-xl"></i><span class="text-[10px] font-bold">Home</span>
-        </button>
-        <button onclick="showTab('earn')" class="nav-btn flex flex-col items-center gap-1 text-gray-400">
-            <i class="fa-solid fa-dollar-sign text-xl"></i><span class="text-[10px] font-bold">Earn</span>
-        </button>
-        <button onclick="showTab('withdraw')" class="nav-btn flex flex-col items-center gap-1 text-gray-400">
-            <i class="fa-solid fa-faucet-drip text-xl"></i><span class="text-[10px] font-bold">Withdraw</span>
-        </button>
-        <button onclick="showTab('profile')" class="nav-btn flex flex-col items-center gap-1 text-gray-400">
-            <i class="fa-solid fa-circle-user text-xl"></i><span class="text-[10px] font-bold">Profile</span>
-        </button>
-    </div>
+/* ===== USER DATA ===== */
+const userId = "public_user";
+const today = new Date().toISOString().slice(0,10);
+let balance = 0;
+let adConfig = { enabled:false, zoneId:"", reward:0 };
 
-    <div id="giga-ad-box" style="display:none;">
-        <script type="text/javascript" src="//giga.pub/show.php?z=5345"></script>
-    </div>
+/* ===== LOAD SETTINGS ===== */
+async function loadSettings(){
+  const adSnap = await getDoc(doc(db,"settings","ads"));
+  if(adSnap.exists()) adConfig = adSnap.data();
+}
+loadSettings();
 
-    <script>
-        // [৩] FIREBASE CONFIG (আপনার ডাটা বসান)
-        const firebaseConfig = {
-            apiKey: "AIza...",
-            authDomain: "...",
-            projectId: "...",
-            storageBucket: "...",
-            messagingSenderId: "...",
-            appId: "..."
-        };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+/* ===== LOAD TELEGRAM TASKS ===== */
+async function loadTelegramTasks(){
+  const box = document.getElementById("tgTasks");
+  box.innerHTML = "";
 
-        let userUID = "";
+  const snap = await getDocs(collection(db,"telegram_tasks"));
+  snap.forEach(d=>{
+    const t = d.data();
+    if(!t.enabled) return;
 
-        // Tab Switching Logic
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active-tab', 'text-gray-400'));
-            const indexMap = { home: 0, earn: 1, withdraw: 2, profile: 3 };
-            document.querySelectorAll('.nav-btn')[indexMap[tabId]].classList.add('active-tab');
-        }
+    const div = document.createElement("div");
+    div.style.marginBottom="12px";
+    div.innerHTML = `
+      <b>${t.title}</b><br>
+      Reward: ${t.reward}<br>
+      <button onclick="claimTask('${d.id}',${t.reward},'${t.link}')">
+        Join & Claim
+      </button>
+    `;
+    box.appendChild(div);
+  });
+}
+loadTelegramTasks();
 
-        // Firebase Auth & Data
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                userUID = user.uid;
-                db.collection("users").doc(user.uid).onSnapshot(doc => {
-                    const data = doc.data();
-                    document.querySelectorAll('.balanceText').forEach(el => el.innerText = data.balance.toFixed(2));
-                    document.querySelectorAll('.userNameText').forEach(el => el.innerText = data.name || "User");
-                    document.getElementById('topBalance').innerText = "BDT " + data.balance.toFixed(2);
-                    document.getElementById('adsWatched').innerText = data.adsWatched || 0;
-                    document.getElementById('compCount').innerText = data.adsWatched || 0;
-                });
-            } else {
-                // এখানে আপনার লগইন পেজের লিংক দিন
-                // window.location.href = "login.html";
-            }
-        });
+/* ===== CLAIM TELEGRAM TASK ===== */
+window.claimTask = async function(taskId,reward,link){
+  const userRef = doc(db,"users",userId);
+  const limitSnap = await getDoc(doc(db,"settings","app"));
 
-        // Ad Logic
-        function watchAd() {
-            alert("অ্যাড লোড হচ্ছে... ১০ সেকেন্ড অপেক্ষা করুন।");
-            
-            // Monetag Interstitial Call (if active)
-            if(typeof show_10477032 === 'function') { show_10477032(); }
+  const limit = limitSnap.exists()
+    ? limitSnap.data().dailyTelegramLimit || 3
+    : 3;
 
-            setTimeout(() => {
-                db.collection("users").doc(userUID).update({
-                    balance: firebase.firestore.FieldValue.increment(0.10),
-                    adsWatched: firebase.firestore.FieldValue.increment(1)
-                });
-                alert("টাস্ক সম্পন্ন! ০.১০ ৳ যোগ হয়েছে।");
-            }, 10000);
-        }
+  const userSnap = await getDoc(userRef);
+  let user = userSnap.exists()
+    ? userSnap.data()
+    : { tgCount:0, tgDate:today, completed_tasks:{} };
 
-        // Withdraw Logic
-        function submitWithdraw() {
-            const amount = parseFloat(document.getElementById('wAmount').value);
-            if(amount < 1) return alert("সঠিক পরিমাণ দিন!");
-            alert("উইথড্র রিকোয়েস্ট পাঠানো হয়েছে!");
-        }
-    </script>
+  if(user.tgDate !== today){
+    user.tgCount = 0;
+    user.tgDate = today;
+  }
+
+  if(user.tgCount >= limit){
+    alert("Daily limit reached");
+    return;
+  }
+
+  if(user.completed_tasks?.[taskId]){
+    alert("Already completed");
+    return;
+  }
+
+  window.open(link,"_blank");
+
+  await updateDoc(userRef,{
+    balance: increment(reward),
+    tgCount: increment(1),
+    tgDate: today,
+    [`completed_tasks.${taskId}`]: true
+  });
+
+  balance += reward;
+  document.getElementById("balance").innerText = balance.toFixed(2);
+};
+</script>
+
+<script>
+function showTab(id){
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function watchAd(){
+  if(!adConfig.enabled){
+    alert("Ads disabled");
+    return;
+  }
+  giga.show({ zoneId: adConfig.zoneId }).then(()=>{
+    balance += Number(adConfig.reward || 0);
+    document.getElementById("balance").innerText = balance.toFixed(2);
+  });
+}
+</script>
+
+<script src="https://giga.pub/sdk.js"></script>
+
 </body>
 </html>
